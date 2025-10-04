@@ -3,6 +3,7 @@ export type { IKiCadClient } from './client/interface.js';
 
 // Client implementations
 export { MockKiCadClient } from './client/mock-client.js';
+export { FileKiCadClient } from './client/file-client.js';
 
 // Types
 export type {

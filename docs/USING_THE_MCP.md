@@ -1,23 +1,36 @@
 # Using the KiCad MCP Server
 
-## Important: This is a Mock Implementation
+## Now Creating Real KiCad Files!
 
-**The KiCad MCP currently uses a MOCK client** - it does NOT create actual KiCad files or interact with real KiCad software. This is because:
+**The KiCad MCP now generates REAL KiCad files** using the Python `kiutils` library:
 
-1. KiCad's IPC (Inter-Process Communication) protocol is not yet available
-2. The server demonstrates the API and workflow for future real integration
-3. All operations return simulated results for development and testing
+- ✅ Creates actual `.kicad_pro`, `.kicad_sch`, and `.kicad_pcb` files
+- ✅ Files can be opened in KiCad software
+- ✅ Generates 3D models (STEP/VRML) via KiCad CLI
+- ⚠️ Requires Python 3 with `kiutils` package installed
+- ⚠️ 3D export requires KiCad CLI to be installed
+
+## Prerequisites
+
+### Required:
+1. **Python 3** - Must be installed and available as `python3`
+2. **kiutils** - Install with: `pip install kiutils`
+
+### Optional (for 3D export):
+3. **KiCad** - Install KiCad with CLI tools
+4. **kicad-cli** - Must be in your system PATH
 
 ## What The MCP Does
 
 When you use KiCad MCP tools in Claude Desktop, the server:
 
 - ✅ Accepts your commands and validates parameters
-- ✅ Returns JSON responses confirming operations
-- ✅ Maintains mock project state in memory
-- ❌ Does NOT create actual `.kicad_pro`, `.kicad_sch`, or `.kicad_pcb` files
-- ❌ Does NOT open KiCad software
-- ❌ Does NOT generate real Gerber files or 3D models
+- ✅ Creates real `.kicad_pro`, `.kicad_sch`, and `.kicad_pcb` files on disk
+- ✅ Generates 3D models (STEP/VRML) using KiCad CLI
+- ✅ Files can be opened and edited in KiCad
+- ✅ Returns paths to created files
+- ⚠️ DRC/ERC checks require KiCad CLI (not yet implemented)
+- ⚠️ Auto-routing not yet implemented
 
 ## How to Use It
 
@@ -33,15 +46,22 @@ Result: JSON response confirming project creation
 
 ### 2. Understanding Responses
 
-The MCP returns **JSON responses** that Claude Desktop processes. You won't see files created on disk - instead, you'll see JSON like:
+The MCP returns **JSON responses** with file paths. Claude Desktop processes these and you'll see:
 
 ```json
 {
   "success": true,
   "projectPath": "./my-led-board/my-led-board",
-  "message": "Project 'my-led-board' created successfully"
+  "files": {
+    "project": "./my-led-board/my-led-board.kicad_pro",
+    "schematic": "./my-led-board/my-led-board.kicad_sch",
+    "pcb": "./my-led-board/my-led-board.kicad_pcb"
+  },
+  "message": "Project 'my-led-board' created successfully with real KiCad files"
 }
 ```
+
+**AND actual files are created on your filesystem!**
 
 ### 3. Common Workflows
 
@@ -55,7 +75,8 @@ The MCP will:
 
 - Parse your requirements (4 layers, ESP32)
 - Select or create appropriate template
-- Return mock project information
+- Generate real .kicad_pro, .kicad_sch, and .kicad_pcb files
+- Return file paths you can open in KiCad
 
 #### Add Components
 
@@ -66,7 +87,8 @@ The MCP will:
 The MCP will:
 
 - Validate component parameters
-- Store component in mock board state
+- Add component to the .kicad_pcb file
+- Save the updated PCB file
 - Return component details with auto-generated reference (e.g., "U1")
 
 #### Run Checks
@@ -77,47 +99,71 @@ The MCP will:
 
 The MCP will:
 
-- Simulate running design rule checks
-- Return mock results (usually pass with warnings)
+- ⚠️ DRC/ERC not yet implemented (requires KiCad CLI)
+- Return placeholder results for now
 
 ## Viewing Results
 
-Since this is a mock implementation:
+With the file-based implementation:
 
-1. **No files are created** - all project state exists only in memory
-2. **No KiCad GUI opens** - the MCP doesn't launch KiCad
-3. **Results are in JSON** - Claude Desktop processes and summarizes them for you
-4. **State resets** - when you restart Claude Desktop, all mock projects are cleared
+1. **Real files ARE created** - `.kicad_pro`, `.kicad_sch`, `.kicad_pcb` files written to disk
+2. **Open in KiCad manually** - navigate to the project folder and open files in KiCad
+3. **3D models generated** - STEP/VRML files created via KiCad CLI (if installed)
+4. **Files persist** - projects remain on disk after Claude Desktop closes
 
 ## What You See
 
-- ✅ Claude will confirm actions ("Added component U1")
-- ✅ Claude can list components, check results, etc.
-- ❌ You won't see files in your filesystem
-- ❌ KiCad won't open automatically
+- ✅ Claude confirms actions with file paths
+- ✅ Real files in your filesystem
+- ✅ Files can be opened in KiCad
+- ✅ 3D models (if KiCad CLI installed)
+- ❌ KiCad doesn't open automatically (you open it manually)
 
-## When Will It Work For Real?
+## Future Enhancements
 
-Once KiCad releases their IPC protocol (planned for KiCad 9+), we'll replace `MockKiCadClient` with `IPCKiCadClient`, and then:
+Once KiCad releases their IPC protocol (planned for KiCad 9+), we can add `IPCKiCadClient` for:
 
-- Real `.kicad_pcb` files will be created
-- KiCad will open and show your designs
-- Gerber exports will generate actual manufacturing files
-- 3D models will be real STEP/VRML files
+- ✅ Real-time KiCad GUI updates (currently: files only)
+- ✅ Automatic KiCad GUI opening (currently: manual)
+- ✅ DRC/ERC via IPC (currently: requires KiCad CLI)
+- ✅ Interactive routing and placement
 
 ## Debugging
 
-If you see errors like:
+### Python/kiutils not found
 
 ```
-Unexpected token 'A', "Adding met"... is not valid JSON
+kiutils not installed. Run: pip install kiutils
 ```
 
-This means:
+**Solution:**
+```bash
+pip install kiutils
+# or
+pip3 install kiutils
+# or
+python3 -m pip install kiutils
+```
 
-1. The server outputted text before JSON (fixed in latest version)
-2. Make sure you're running the latest built version: `pnpm build`
-3. Restart Claude Desktop after rebuilding
+### KiCad CLI not found (for 3D export)
+
+```
+Failed to execute kicad-cli: command not found
+```
+
+**Solution:**
+1. Install KiCad from https://www.kicad.org/download/
+2. Ensure `kicad-cli` is in your system PATH
+3. Test with: `kicad-cli --version`
+
+### Build errors
+
+```bash
+# Rebuild after code changes
+pnpm build
+
+# Restart Claude Desktop after rebuilding
+```
 
 ## Testing the MCP
 
@@ -131,49 +177,53 @@ npx fastmcp dev packages/mcp-server/dist/index.js
 npx fastmcp inspect packages/mcp-server/dist/index.js
 ```
 
-## Current Capabilities (Mock Mode)
+## Current Capabilities (File-Based Mode)
 
-- ✅ Project creation with templates
-- ✅ Component placement and listing
-- ✅ DRC/ERC checks (always pass in mock)
-- ✅ BOM generation (returns mock path)
-- ✅ 3D model generation (returns mock path)
-- ✅ Auto-routing (simulates success)
-- ✅ Export operations (returns mock file paths)
+- ✅ Project creation with templates (real `.kicad_*` files)
+- ✅ Component placement and listing (saved to PCB files)
+- ✅ 3D model generation (STEP/VRML via KiCad CLI)
+- ⚠️ DRC/ERC checks (requires KiCad CLI - not yet implemented)
+- ⚠️ BOM generation (not yet implemented)
+- ⚠️ Auto-routing (not yet implemented)
+- ⚠️ Gerber export (requires KiCad CLI - not yet implemented)
 
-## Future Capabilities (Real Mode)
+## Roadmap
 
-When KiCad IPC is available:
+### Short-term
+- [ ] Implement DRC/ERC via KiCad CLI
+- [ ] Implement Gerber export via KiCad CLI
+- [ ] Add BOM generation
+- [ ] Improve component footprint selection
+- [ ] Add schematic symbol placement
 
-- Real project file creation
-- Real-time KiCad GUI updates
-- Actual component placement visible in KiCad
-- True DRC/ERC with real violations
-- Manufacturing-ready Gerber files
-- Actual STEP/VRML 3D models
-- Integration with supplier APIs for BOM pricing
+### Long-term (when KiCad IPC available)
+- [ ] Real-time KiCad GUI updates
+- [ ] Automatic KiCad opening
+- [ ] Interactive routing
+- [ ] Integration with supplier APIs for BOM pricing
 
 ## FAQ
 
-**Q: Why don't I see any files created?**
-A: This is a mock implementation. Files will only be created once KiCad IPC is available.
+**Q: Where are the files created?**
+A: Files are created in the path you specify. Default is the current directory. Check the JSON response for exact file paths.
 
 **Q: Will KiCad open automatically?**
-A: Not in mock mode. In the future with real IPC, KiCad will open and show your designs.
+A: No, you need to open KiCad manually and load the generated `.kicad_pro` file.
 
-**Q: Can I import the mock projects into KiCad?**
-A: No, they don't create actual files. This is for API demonstration only.
+**Q: Can I edit the generated files in KiCad?**
+A: Yes! They're real KiCad files. Open them in KiCad and edit as normal.
 
-**Q: When will real KiCad integration be ready?**
-A: It depends on when the KiCad team releases their IPC protocol (expected in KiCad 9+).
+**Q: Do I need KiCad installed?**
+A:
+- **To create PCB files:** No, only Python with kiutils
+- **To view/edit files:** Yes, install KiCad
+- **To generate 3D models:** Yes, need KiCad CLI
 
-**Q: Is this useful even as a mock?**
-A: Yes! It:
+**Q: What if I don't have KiCad?**
+A: You can still create PCB files. Install KiCad later to view/edit them.
 
-- Demonstrates the workflow
-- Lets you plan PCB projects with AI
-- Tests the MCP architecture
-- Provides a development platform for when IPC arrives
+**Q: How do I generate a 3D model?**
+A: Use the `kicad_generate_3d` tool. Requires KiCad CLI installed and in PATH.
 
 ## Getting Help
 
