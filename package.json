@@ -9,13 +9,16 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "pnpm -r build",
-    "dev": "pnpm -r --parallel dev",
-    "test": "pnpm -r test",
-    "lint": "pnpm -r lint",
-    "format": "pnpm -r format",
-    "type-check": "pnpm -r type-check",
-    "clean": "pnpm -r clean && rm -rf node_modules",
+    "build": "bun run --bun build",
+    "dev": "bun run --bun dev",
+    "test": "bun test",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "type-check": "bun run --bun type-check",
+    "clean": "bun run --bun clean && rm -rf node_modules",
     "prepare": "husky"
   },
   "repository": {
@@ -38,28 +41,20 @@
   "author": "Muammar Yacoob <https://github.com/muammar-yacoob>",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^30.0.0",
+    "@biomejs/biome": "^1.8.0",
     "@types/node": "^20.17.24",
-    "@typescript-eslint/eslint-plugin": "^8.21.0",
-    "@typescript-eslint/parser": "^8.21.0",
-    "eslint": "^9.18.0",
-    "eslint-config-prettier": "^9.1.0",
     "husky": "^9.1.7",
-    "jest": "^30.2.0",
     "lint-staged": "^15.3.0",
-    "prettier": "^3.4.2",
     "semantic-release": "^23.0.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "ts-jest": "^29.4.4",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.45.0"
+    "typescript": "^5.8.2"
   },
   "engines": {
     "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "bun": ">=1.0.0"
   },
-  "packageManager": "pnpm@8.15.0",
+  "packageManager": "bun@1.1.0",
   "main": "eslint.config.js",
   "dependencies": {
     "eslint-scope": "^8.4.0",

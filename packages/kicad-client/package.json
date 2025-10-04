@@ -13,9 +13,9 @@
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "test": "jest"
+    "lint": "biome lint src",
+    "format": "biome format --write src",
+    "test": "bun test"
   },
   "devDependencies": {
     "@types/node": "^20.17.24"
