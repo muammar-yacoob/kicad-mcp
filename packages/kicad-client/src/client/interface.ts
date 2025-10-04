@@ -104,4 +104,14 @@ export interface IKiCadClient {
    * Generate Bill of Materials (BOM)
    */
   generateBOM(outputPath: string): Promise<string>;
+
+  /**
+   * Set the number of layers for the PCB
+   */
+  setLayerCount(layers: number): Promise<void>;
+
+  /**
+   * Set the board size (dimensions in mm)
+   */
+  setBoardSize(width: number, height: number): Promise<void>;
 }

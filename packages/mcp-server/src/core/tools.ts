@@ -190,8 +190,7 @@ export function registerTools(server: FastMCP) {
       await KiCadService.ensureConnected();
       const client = KiCadService.getClient();
 
-      await client.addComponent({
-        reference: params.reference,
+      const component = await client.addComponent({
         value: params.value,
         footprint: params.footprint,
         position: { x: params.x, y: params.y },
@@ -202,14 +201,14 @@ export function registerTools(server: FastMCP) {
       return JSON.stringify({
         success: true,
         component: {
-          reference: params.reference,
-          value: params.value,
-          footprint: params.footprint,
-          position: { x: params.x, y: params.y },
-          rotation: params.rotation,
-          layer: params.layer
+          reference: component.reference,
+          value: component.value,
+          footprint: component.footprint,
+          position: component.position,
+          rotation: component.rotation,
+          layer: component.layer
         },
-        message: `Successfully added component ${params.reference} (${params.value})`
+        message: `Successfully added component ${component.reference} (${component.value})`
       }, null, 2);
     }
   });
@@ -266,7 +265,7 @@ export function registerTools(server: FastMCP) {
 
       const files = await client.export({
         format: params.format,
-        outputPath: params.outputPath
+        outputDir: params.outputPath
       });
 
       return JSON.stringify({
@@ -324,7 +323,7 @@ export function registerTools(server: FastMCP) {
         await client.openProject(params.project);
       }
 
-      const modelPath = await client.generate3DModel(params.outputPath);
+      const modelPath = await client.generate3D(params.outputPath, params.format as 'step' | 'vrml');
 
       return JSON.stringify({
         success: true,
@@ -350,15 +349,11 @@ export function registerTools(server: FastMCP) {
         await client.openProject(params.project);
       }
 
-      const result = await client.autoRoute();
+      await client.autoRoute();
 
       return JSON.stringify({
-        success: result.success,
-        routedNets: result.routedNets,
-        failedNets: result.failedNets,
-        message: result.success
-          ? `Successfully routed ${result.routedNets} net(s)`
-          : `Routing completed with ${result.failedNets} failed net(s)`
+        success: true,
+        message: `Auto-routing completed successfully`
       }, null, 2);
     }
   });

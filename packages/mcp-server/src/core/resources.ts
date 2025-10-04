@@ -13,6 +13,7 @@ export function registerResources(server: FastMCP) {
     name: "Current KiCad Project",
     mimeType: "application/json",
     description: "Information about the currently open KiCad project",
+    arguments: [],
     async load() {
       try {
         const client = KiCadService.getClient();
@@ -50,6 +51,7 @@ export function registerResources(server: FastMCP) {
     name: "PCB Components List",
     mimeType: "application/json",
     description: "List of all components in the current PCB",
+    arguments: [],
     async load() {
       try {
         await KiCadService.ensureConnected();
@@ -132,6 +134,7 @@ export function registerResources(server: FastMCP) {
     uriTemplate: "kicad://drc/results",
     name: "DRC Check Results",
     mimeType: "application/json",
+    arguments: [],
     description: "Latest Design Rule Check results",
     async load() {
       try {
@@ -164,6 +167,7 @@ export function registerResources(server: FastMCP) {
     name: "ERC Check Results",
     mimeType: "application/json",
     description: "Latest Electrical Rule Check results",
+    arguments: [],
     async load() {
       try {
         await KiCadService.ensureConnected();

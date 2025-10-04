@@ -208,10 +208,7 @@ export class ProjectCreationService {
       };
 
       // Create project using KiCad client
-      await this.client.createProject({
-        name: config.name,
-        path: config.path,
-      });
+      await this.client.createProject(config.name, config.path);
 
       // Apply template configuration if available
       if (config.layers) {

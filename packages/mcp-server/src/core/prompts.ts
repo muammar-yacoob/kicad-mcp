@@ -17,7 +17,8 @@ export function registerPrompts(server: FastMCP) {
         required: true
       }
     ],
-    load: async ({ task }: { task: string }) => {
+    load: async (args: Record<string, unknown>) => {
+      const task = args.task as string;
       return `I'll help you with your PCB design task: ${task}
 
 I have access to the following KiCad automation tools:
@@ -44,7 +45,8 @@ What specific assistance do you need with this task?`;
         required: false
       }
     ],
-    load: async ({ projectPath }: { projectPath?: string }) => {
+    load: async (args: Record<string, unknown>) => {
+      const projectPath = args.projectPath as string | undefined;
       const projectInfo = projectPath ? `for project at ${projectPath}` : "for the current project";
       return `I'll analyze the design rules ${projectInfo} and help fix any violations.
 
@@ -69,7 +71,8 @@ Would you like me to proceed with the analysis?`;
         required: false
       }
     ],
-    load: async ({ componentType }: { componentType?: string }) => {
+    load: async (args: Record<string, unknown>) => {
+      const componentType = args.componentType as string | undefined;
       const typeInfo = componentType ? ` for ${componentType}` : "";
       return `I'll help you place components${typeInfo} on your PCB.
 
@@ -95,7 +98,8 @@ What components would you like to place, and where?`;
         required: false
       }
     ],
-    load: async ({ manufacturer }: { manufacturer?: string }) => {
+    load: async (args: Record<string, unknown>) => {
+      const manufacturer = args.manufacturer as string | undefined;
       const mfgInfo = manufacturer ? ` for ${manufacturer}` : "";
       return `I'll help you prepare manufacturing files${mfgInfo}.
 
@@ -114,6 +118,7 @@ Which files do you need, and in what format?`;
   server.addPrompt({
     name: "auto_route_pcb",
     description: "Help with PCB auto-routing",
+    arguments: [],
     load: async () => {
       return `I'll help you auto-route traces on your PCB.
 
@@ -143,7 +148,8 @@ Would you like me to proceed with auto-routing?`;
         required: false
       }
     ],
-    load: async ({ projectType }: { projectType?: string }) => {
+    load: async (args: Record<string, unknown>) => {
+      const projectType = args.projectType as string | undefined;
       const typeInfo = projectType ? ` for a ${projectType}` : "";
       return `I'll help you create a new KiCad project${typeInfo}.
 

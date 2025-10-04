@@ -62,6 +62,15 @@ export class MockKiCadClient implements IKiCadClient {
     };
 
     this.currentProject = project;
+
+    // Automatically create a default board for the new project
+    this.currentBoard = {
+      path: project.pcbPath || `${path}/${name}.kicad_pcb`,
+      layers: 2,
+      components: [],
+      nets: [],
+    };
+
     return project;
   }
 
@@ -253,6 +262,33 @@ export class MockKiCadClient implements IKiCadClient {
     await this.delay();
 
     return `${outputPath}.csv`;
+  }
+
+  async setLayerCount(layers: number): Promise<void> {
+    this.ensureConnected();
+    await this.delay();
+
+    if (layers < 1 || layers > 32) {
+      throw new OperationError('Layer count must be between 1 and 32');
+    }
+
+    if (this.currentBoard) {
+      this.currentBoard.layers = layers;
+    }
+    // If no board loaded, setting will be applied when board is created
+  }
+
+  async setBoardSize(width: number, height: number): Promise<void> {
+    this.ensureConnected();
+    await this.delay();
+
+    if (width <= 0 || height <= 0) {
+      throw new OperationError('Board dimensions must be positive');
+    }
+
+    // Board size is stored in the mock but not exposed in the KiCadBoard interface
+    // In a real implementation, this would modify the board edge cuts
+    // For now, this is a no-op in the mock but validates the parameters
   }
 
   // Test utilities
