@@ -1,0 +1,29 @@
+{
+  "name": "@spark-apps/mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server implementation for KiCad automation",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "test": "jest"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "fastmcp": "^1.21.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/node": "^20.17.24"
+  }
+}
