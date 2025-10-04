@@ -18,8 +18,7 @@
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "type-check": "bun run --bun type-check",
-    "clean": "bun run --bun clean && rm -rf node_modules",
-    "prepare": "husky"
+    "clean": "bun run --bun clean && rm -rf node_modules"
   },
   "repository": {
     "type": "git",
@@ -43,8 +42,6 @@
   "devDependencies": {
     "@biomejs/biome": "^1.8.0",
     "@types/node": "^20.17.24",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.3.0",
     "semantic-release": "^23.0.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
