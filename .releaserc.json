@@ -28,7 +28,7 @@
       {
         "assets": [
           {
-            "path": "kicad-mcp-mcp-${nextRelease.version}.tar.gz",
+            "path": "kicad-mcp-${nextRelease.version}.tar.gz",
             "label": "KiCad MCP Distribution"
           }
         ]
