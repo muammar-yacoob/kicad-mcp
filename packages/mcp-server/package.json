@@ -18,6 +18,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@spark-apps/kicad-client": "workspace:*",
     "cors": "^2.8.5",
     "fastmcp": "^1.21.0",
     "zod": "^3.24.2"

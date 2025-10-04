@@ -4,6 +4,7 @@ export default {
   testEnvironment: 'node',
   roots: ['<rootDir>/packages', '<rootDir>/apps'],
   testMatch: ['**/__tests__/**/*.ts', '**/*.test.ts', '**/*.spec.ts'],
+  extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
@@ -12,9 +13,17 @@ export default {
       'ts-jest',
       {
         useESM: true,
+        tsconfig: {
+          verbatimModuleSyntax: false,
+          module: 'ESNext',
+          target: 'ES2022',
+        },
       },
     ],
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(@spark-apps)/)',
+  ],
   collectCoverageFrom: [
     '**/*.ts',
     '!**/*.d.ts',
