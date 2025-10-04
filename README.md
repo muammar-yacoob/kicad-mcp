@@ -81,6 +81,16 @@ npm install -g @spark-apps/kicad-mcp
 
 > "Initialize a simple Arduino shield project"
 
+> "List available project templates"
+
+> "Create a basic 2-layer PCB called 'my-sensor-board'"
+
+**Available Templates:**
+- `basic` - Simple 2-layer PCB
+- `esp32-dev` - 4-layer ESP32 dev board with USB-C
+- `arduino-shield` - 2-layer Arduino-compatible shield
+- `power-supply` - 2-layer power supply board
+
 </details>
 
 <details>
@@ -134,10 +144,13 @@ npm install -g @spark-apps/kicad-mcp
 
 ✅ **What Works Now**:
 
+- Project creation with templates and natural language prompts
+- Template selection (basic, esp32-dev, arduino-shield, power-supply)
+- Project metadata injection (author, description, tags, version)
 - Command interface and workflow testing
 - All tool signatures and parameter validation
 - Integration with Claude Desktop
-- Mock responses for development/testing
+- Mock KiCad client for development/testing
 
 🔄 **Coming Soon**:
 
