@@ -50,7 +50,7 @@ export interface ParsedProjectRequirements {
 /**
  * Available project templates
  */
-const PROJECT_TEMPLATES: Map<string, ProjectTemplate> = new Map([
+const PROJECT_TEMPLATES = new Map<string, ProjectTemplate>([
   [
     'basic',
     {
@@ -102,7 +102,7 @@ export class ProjectCreationService {
   private client: IKiCadClient;
 
   constructor(client?: IKiCadClient) {
-    this.client = client || KiCadService.getClient();
+    this.client = client ?? KiCadService.getClient();
   }
 
   /**
@@ -123,7 +123,7 @@ export class ProjectCreationService {
    * Parse natural language prompt into project requirements
    * This is a placeholder - actual implementation would use LLM APIs
    */
-  async parsePrompt(prompt: string): Promise<ParsedProjectRequirements> {
+  parsePrompt(prompt: string): ParsedProjectRequirements {
     // TODO: Integrate with OpenAI GPT-4 or Claude API
     // For now, return a mock parsed response
 
@@ -138,7 +138,7 @@ export class ProjectCreationService {
     }
 
     // Extract project name from prompt or use default
-    const nameMatch = prompt.match(/(?:called|named)\s+"([^"]+)"/i);
+    const nameMatch = /(?:called|named)\s+"([^"]+)"/i.exec(prompt);
     const name = nameMatch ? nameMatch[1] : 'new-project';
 
     const requirements: ParsedProjectRequirements = {
@@ -179,7 +179,7 @@ export class ProjectCreationService {
       // Parse prompt if provided
       let requirements: ParsedProjectRequirements | undefined;
       if (params.prompt) {
-        requirements = await this.parsePrompt(params.prompt);
+        requirements = this.parsePrompt(params.prompt);
       }
 
       // Get template if specified
@@ -192,15 +192,15 @@ export class ProjectCreationService {
       }
 
       // Determine final project configuration
-      const projectName = requirements?.name || params.name;
+      const projectName = requirements?.name ?? params.name;
       const projectPath = `${params.path}/${projectName}`;
 
       const config = {
         name: projectName,
         path: projectPath,
-        layers: requirements?.layers || template?.layers || 2,
-        boardSize: requirements?.boardSize || template?.boardSize || { width: 100, height: 80 },
-        components: requirements?.components || template?.defaultComponents || [],
+        layers: requirements?.layers ?? template?.layers ?? 2,
+        boardSize: requirements?.boardSize ?? template?.boardSize ?? { width: 100, height: 80 },
+        components: requirements?.components ?? template?.defaultComponents ?? [],
         metadata: {
           ...params.metadata,
           ...requirements?.metadata,
@@ -210,19 +210,12 @@ export class ProjectCreationService {
       // Create project using KiCad client
       await this.client.createProject(config.name, config.path);
 
-      // Apply template configuration if available
-      if (config.layers) {
-        await this.client.setLayerCount(config.layers);
-      }
-
-      if (config.boardSize) {
-        await this.client.setBoardSize(config.boardSize.width, config.boardSize.height);
-      }
+      // Apply template configuration
+      await this.client.setLayerCount(config.layers);
+      await this.client.setBoardSize(config.boardSize.width, config.boardSize.height);
 
       // Add metadata to project
-      if (config.metadata) {
-        await this.addProjectMetadata(projectPath, config.metadata);
-      }
+      this.addProjectMetadata(projectPath, config.metadata);
 
       return {
         success: true,
@@ -242,13 +235,12 @@ export class ProjectCreationService {
    * Add metadata to project file
    * This would write metadata to the .kicad_pro file or a separate metadata file
    */
-  private async addProjectMetadata(
-    projectPath: string,
-    metadata: ProjectMetadata
-  ): Promise<void> {
+  private addProjectMetadata(projectPath: string, metadata: ProjectMetadata): void {
     // TODO: Implement actual metadata writing to KiCad project file
-    // For now, this is a placeholder
-    console.log(`Adding metadata to project at ${projectPath}:`, metadata);
+    // For now, this is a no-op placeholder
+    // Metadata would be written to the .kicad_pro JSON file
+    void projectPath;
+    void metadata;
   }
 
   /**
